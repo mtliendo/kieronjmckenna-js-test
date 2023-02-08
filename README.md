@@ -1,14 +1,9 @@
-# Welcome to your CDK TypeScript project
+1. clone the repo
+2. In the project root, install the dependencies with `npm i` from the terminal
+3. update lines 7 and 10 of the file test/kieronjmckenna-js-test.test.ts to match your local AWS credentials
+4. In the project root, run the test command with  `npm test` from the terminal
+5. Observe 1 failing test and the error: 
 
-This is a blank project for CDK development with TypeScript.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+```bash
+{"message":"Unrecognized field \"username\" (class com.amazonaws.deepdish.common.identity.LambdaAuthIdentity), not marked as ignorable (one known property: \"resolverContext\"])\n at [Source: UNKNOWN; line: -1, column: -1] (through reference chain: com.amazonaws.deepdish.transform.model.MappingTemplateContext$MappingTemplateContextBuilder[\"identity\"]->com.amazonaws.deepdish.common.identity.LambdaAuthIdentity[\"username\"])"}
+```
