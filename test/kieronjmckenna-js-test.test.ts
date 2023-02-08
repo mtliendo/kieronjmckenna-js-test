@@ -1,17 +1,50 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as KieronjmckennaJsTest from '../lib/kieronjmckenna-js-test-stack';
+import { Context } from '@aws-appsync/utils'
+// import { AppSyncIdentityCognito } from 'aws-lambda'
+import * as AWS from 'aws-sdk'
+import * as fs from 'fs'
+import { join } from 'path'
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/kieronjmckenna-js-test-stack.ts
-test('SQS Queue Created', () => {
-//   const app = new cdk.App();
-//     // WHEN
-//   const stack = new KieronjmckennaJsTest.KieronjmckennaJsTestStack(app, 'MyTestStack');
-//     // THEN
-//   const template = Template.fromStack(stack);
+var credentials = new AWS.SharedIniFileCredentials({ profile: 'default' })
 
-//   template.hasResourceProperties('AWS::SQS::Queue', {
-//     VisibilityTimeout: 300
-//   });
-});
+const client = new AWS.AppSync({
+	region: 'us-east-1',
+	credentials,
+})
+const runtime: AWS.AppSync.AppSyncRuntime = {
+	name: 'APPSYNC_JS',
+	runtimeVersion: '1.0.0',
+}
+type AppSyncIdentityCognito = {
+	sourceIp: string[]
+	username: string
+	groups: string[] | null
+	sub: string
+	issuer: string
+	claims: any
+	defaultAuthStrategy: string
+}
+
+describe('test the resolver', () => {
+	it('should pass remote check', async () => {
+		const code = fs.readFileSync(join(__dirname, 'example-resolver.js'), 'utf8')
+
+		const identity = {
+			username: 'Michael',
+		} as AppSyncIdentityCognito
+
+		const context = JSON.stringify({
+			identity,
+		} as Context)
+
+		const response = await client
+			.evaluateCode({ code, context, runtime, function: 'request' })
+			.promise()
+
+		if (response.evaluationResult) {
+			const result = JSON.parse(response.evaluationResult)
+			console.log(result)
+		} else {
+			throw Error(JSON.stringify(response?.error))
+		}
+	})
+})
